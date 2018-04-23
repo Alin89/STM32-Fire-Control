@@ -53,6 +53,7 @@
 #include <stdio.h>
 #include "stm32f4xx_hal.h"
 #include "usart.h"
+#include "ENV_pack.h"
 /* USER CODE BEGIN Includes */
 
 /* USER CODE END Includes */
@@ -72,7 +73,7 @@ void StartDefaultTask(void const * argument);
 void ReadDataTask(void const * argument);
 void SendDataTask(void const * argument);
 
-void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
+ /* (MISRA C 2004 rule 8.1) */
 
 /* USER CODE BEGIN FunctionPrototypes */
 
@@ -143,11 +144,11 @@ void StartDefaultTask(void const * argument)
 void ReadDataTask(void const * argument)
 {
     /* USER CODE BEGIN ReadDataTask */
-    printf("Read Data Task Start!\r\n");
+    USART4_printf("Read Data Task Start!\r\n");
     /* 配置433模块为从机发送模式 M0 = 1， M1 = 0 */
     HAL_GPIO_WritePin(M0_GPIO_Port,M0_Pin,GPIO_PIN_SET);
     HAL_GPIO_WritePin(M1_GPIO_Port,M1_Pin,GPIO_PIN_RESET);
-    printf("433 configure ok!\r\n");
+    USART4_printf("433 configure ok!\r\n");
     /* Infinite loop */
     for(;;)
     {
@@ -155,15 +156,9 @@ void ReadDataTask(void const * argument)
         osDelay(1000);
         HAL_GPIO_WritePin(LED1_GPIO_Port,LED1_Pin,GPIO_PIN_RESET);
         osDelay(1000);
-        HAL_GPIO_WritePin(LED1_GPIO_Port,LED1_Pin,GPIO_PIN_SET);
-        osDelay(1000);
-        HAL_GPIO_WritePin(LED1_GPIO_Port,LED1_Pin,GPIO_PIN_RESET);
-        osDelay(1000);
-        HAL_GPIO_WritePin(LED1_GPIO_Port,LED1_Pin,GPIO_PIN_SET);
-        osDelay(1000);
-        HAL_GPIO_WritePin(LED1_GPIO_Port,LED1_Pin,GPIO_PIN_RESET);
-        osDelay(1000);
-        USART2_printf("hello!\n");
+        env_pack.format();
+        env_pack.Send_Pack();
+        // USART2_printf("hello!\n");
     }
     /* USER CODE END ReadDataTask */
 }

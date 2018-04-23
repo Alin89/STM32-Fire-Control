@@ -71,7 +71,7 @@ extern UART_HandleTypeDef huart2;
 /* USER CODE END Private defines */
 
 extern void _Error_Handler(char *, int);
-
+extern void MX_FREERTOS_Init(void);
 void MX_UART4_Init(void);
 void MX_USART2_UART_Init(void);
 void USART2_printf (char *fmt, ...);
