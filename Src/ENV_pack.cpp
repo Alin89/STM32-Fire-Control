@@ -1,3 +1,9 @@
+/*
+ * @Author: Zheng Qihang 
+ * @Date: 2018-04-26 14:14:49 
+ * @Last Modified by: Zheng Qihang
+ * @Last Modified time: 2018-04-26 14:30:54
+ */
 #include "ENV_pack.h"
 #include "stdio.h"
 #include "usart.h"
@@ -5,7 +11,7 @@
 #include <cstring>
 ENV_PACK::ENV_PACK(void)
 {
-    sprintf((char *)Header, "%s", "HJ"); //头赋值
+    sprintf((char *)Header, "%s", "HJ"); //头赋�?
     Cnt = 0;
     Len = 41;
     Number = 0; //节点
@@ -20,6 +26,49 @@ ENV_PACK::ENV_PACK(void)
     Lux=100;
     Pressure=102;
 }
+
+
+void ENV_PACK::Set_Fire(uint8_t x)
+{
+    Fire=x;
+}
+void ENV_PACK::Set_Smooth(uint8_t x)
+{
+    Smooth=x;
+}
+void ENV_PACK::Set_Air_quilty(uint8_t x)
+{
+    Air_quilty=x;
+}
+void ENV_PACK::Set_Gas(uint8_t x)
+{
+    Gas=x;
+}
+void ENV_PACK::Set_Dust(uint8_t x)
+{
+    Dust=x;
+}
+void ENV_PACK::Set_O2(uint8_t x)
+{
+    O2=x;
+}
+void ENV_PACK::Set_Tmperture(uint8_t x)
+{
+    Tmperture=x;
+}
+void ENV_PACK::Set_Humidity(uint8_t x)
+{
+    Humidity=x;
+}
+void ENV_PACK::Set_Lux(uint16_t x)
+{
+    Lux=x;
+}
+void ENV_PACK::Set_Pressure(uint16_t x)
+{
+    Pressure=x;
+}
+
 
 void ENV_PACK::data_update(uint8_t huoyan,uint8_t yanwu,uint8_t kongqi,uint8_t yehua,
                     uint8_t fencheng,uint8_t yangqi,uint8_t wendu,uint8_t shidu,
@@ -37,7 +86,7 @@ void ENV_PACK::data_update(uint8_t huoyan,uint8_t yanwu,uint8_t kongqi,uint8_t y
         Pressure=qiya;
 }
 
-void ENV_PACK::format(void)//格式化输出
+void ENV_PACK::format(void)//格式化输�?
 {
     Cnt= Cnt > 99 ? 0 : Cnt;
     memset(Env_buf,0,50);

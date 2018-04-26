@@ -1,3 +1,9 @@
+/*
+ * @Author: Zheng Qihang 
+ * @Date: 2018-04-26 14:30:20 
+ * @Last Modified by: Zheng Qihang
+ * @Last Modified time: 2018-04-26 14:36:06
+ */
 #ifndef _ENV_PACK_H_
 #define _ENV_PACK_H_
 #include "stdint.h"
@@ -22,6 +28,18 @@ class ENV_PACK
     uint16_t Pressure;
 
     ENV_PACK(void);
+
+    void Set_Fire(uint8_t x);
+    void Set_Smooth(uint8_t x);
+    void Set_Air_quilty(uint8_t x);
+    void Set_Gas(uint8_t x);
+    void Set_Dust(uint8_t x);
+    void Set_O2(uint8_t x);
+    void Set_Tmperture(uint8_t x);
+    void Set_Humidity(uint8_t x);
+    void Set_Lux(uint16_t x);
+    void Set_Pressure(uint16_t x);
+
 
     void data_update(uint8_t huoyan,uint8_t yanwu,uint8_t kongqi,uint8_t yehua,
                     uint8_t fencheng,uint8_t yangqi,uint8_t wendu,uint8_t shidu,

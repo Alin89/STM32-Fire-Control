@@ -52,6 +52,7 @@
 #include "cmsis_os.h"
 #include "usart.h"
 #include "gpio.h"
+#include "hdc1080.h"
 
 /* USER CODE BEGIN Includes */
 

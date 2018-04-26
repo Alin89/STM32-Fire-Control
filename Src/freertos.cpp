@@ -54,6 +54,20 @@
 #include "stm32f4xx_hal.h"
 #include "usart.h"
 #include "ENV_pack.h"
+#include "hdc1080.h"
+#include "i2c.h"
+
+volatile float temp;
+volatile uint8_t humi;
+volatile uint8_t huoyan;
+volatile uint8_t yanwu;
+volatile uint8_t kongqi;
+volatile uint8_t fencheng;
+volatile uint8_t yangqi;
+volatile uint8_t qiya;
+volatile uint8_t read_data[2];
+volatile uint16_t reg = 0;
+
 /* USER CODE BEGIN Includes */
 
 /* USER CODE END Includes */
@@ -69,11 +83,11 @@ osMessageQId Data_queHandle;
 /* USER CODE END Variables */
 
 /* Function prototypes -------------------------------------------------------*/
-void StartDefaultTask(void const * argument);
-void ReadDataTask(void const * argument);
-void SendDataTask(void const * argument);
+void StartDefaultTask(void const *argument);
+void ReadDataTask(void const *argument);
+void SendDataTask(void const *argument);
 
- /* (MISRA C 2004 rule 8.1) */
+/* (MISRA C 2004 rule 8.1) */
 
 /* USER CODE BEGIN FunctionPrototypes */
 
@@ -83,7 +97,8 @@ void SendDataTask(void const * argument);
 
 /* Init FreeRTOS */
 
-void MX_FREERTOS_Init(void) {
+void MX_FREERTOS_Init(void)
+{
     /* USER CODE BEGIN Init */
 
     /* USER CODE END Init */
@@ -128,12 +143,12 @@ void MX_FREERTOS_Init(void) {
 }
 
 /* StartDefaultTask function */
-void StartDefaultTask(void const * argument)
+void StartDefaultTask(void const *argument)
 {
 
     /* USER CODE BEGIN StartDefaultTask */
     /* Infinite loop */
-    for(;;)
+    for (;;)
     {
         osDelay(1);
     }
@@ -141,34 +156,43 @@ void StartDefaultTask(void const * argument)
 }
 
 /* ReadDataTask function */
-void ReadDataTask(void const * argument)
+void ReadDataTask(void const *argument)
 {
+    MX_I2C1_Init();
     /* USER CODE BEGIN ReadDataTask */
     USART4_printf("Read Data Task Start!\r\n");
     /* 配置433模块为从机发送模式 M0 = 1， M1 = 0 */
-    HAL_GPIO_WritePin(M0_GPIO_Port,M0_Pin,GPIO_PIN_SET);
-    HAL_GPIO_WritePin(M1_GPIO_Port,M1_Pin,GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(M0_GPIO_Port, M0_Pin, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(M1_GPIO_Port, M1_Pin, GPIO_PIN_RESET);
     USART4_printf("433 configure ok!\r\n");
+
+    hdc1080_init(&hi2c1, Temperature_Resolution_14_bit, Humidity_Resolution_14_bit);
+
     /* Infinite loop */
-    for(;;)
+    for (;;)
     {
-        HAL_GPIO_WritePin(LED1_GPIO_Port,LED1_Pin,GPIO_PIN_SET);
+        HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_SET);
         osDelay(1000);
-        HAL_GPIO_WritePin(LED1_GPIO_Port,LED1_Pin,GPIO_PIN_RESET);
+        HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET);
         osDelay(1000);
+        hdc1080_start_measurement(&hi2c1, (float *)&temp, (uint8_t *)&humi);
+        env_pack.Set_Fire(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1));
+        env_pack.Set_Smooth(HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_0));
+        env_pack.Set_Dust(HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_2));
+        env_pack.Set_Tmperture((uint8_t)temp);
+        env_pack.Set_Humidity(humi);
         env_pack.format();
         env_pack.Send_Pack();
-        // USART2_printf("hello!\n");
     }
     /* USER CODE END ReadDataTask */
 }
 
 /* SendDataTask function */
-void SendDataTask(void const * argument)
+void SendDataTask(void const *argument)
 {
     /* USER CODE BEGIN SendDataTask */
     /* Infinite loop */
-    for(;;)
+    for (;;)
     {
         osDelay(1);
     }
