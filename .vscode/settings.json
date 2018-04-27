@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "string": "cpp",
+        "xstring": "cpp",
+        "main.h": "c"
+    }
+}
