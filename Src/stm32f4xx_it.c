@@ -36,9 +36,12 @@
 #include "stm32f4xx_it.h"
 #include "cmsis_os.h"
 
+#include "usart.h"
+
 /* USER CODE BEGIN 0 */
 
 /* USER CODE END 0 */
+
 
 /* External variables --------------------------------------------------------*/
 
@@ -149,6 +152,11 @@ void SysTick_Handler(void)
     /* USER CODE BEGIN SysTick_IRQn 1 */
 
     /* USER CODE END SysTick_IRQn 1 */
+}
+
+void USART1_IRQHandler(void)
+{
+    HAL_UART_IRQHandler(&huart1);
 }
 
 /******************************************************************************/

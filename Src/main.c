@@ -53,6 +53,7 @@
 #include "usart.h"
 #include "gpio.h"
 #include "hdc1080.h"
+#include "Adc1.h"
 
 /* USER CODE BEGIN Includes */
 
@@ -103,6 +104,7 @@ int main(void)
 
     /* Initialize all configured peripherals */
     MX_GPIO_Init();
+    MX_USART1_UART_Init();
     MX_USART2_UART_Init();
     MX_UART4_Init();
 
@@ -124,6 +126,7 @@ int main(void)
     {
         /* USER CODE END WHILE */
 
+        
         /* USER CODE BEGIN 3 */
     }
     /* USER CODE END 3 */

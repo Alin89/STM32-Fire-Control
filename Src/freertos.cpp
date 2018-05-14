@@ -56,17 +56,19 @@
 #include "ENV_pack.h"
 #include "hdc1080.h"
 #include "i2c.h"
+#include "Adc1.h"
 
 volatile float temp;
 volatile uint8_t humi;
 volatile uint8_t huoyan;
 volatile uint8_t yanwu;
 volatile uint8_t kongqi;
-volatile uint8_t fencheng;
+volatile double fencheng = 0;
 volatile uint8_t yangqi;
 volatile uint8_t qiya;
 volatile uint8_t read_data[2];
 volatile uint16_t reg = 0;
+uint8_t aRxBuffer[9];
 
 /* USER CODE BEGIN Includes */
 
@@ -159,6 +161,7 @@ void StartDefaultTask(void const *argument)
 void ReadDataTask(void const *argument)
 {
     MX_I2C1_Init();
+    MY_ADC_Init();
     /* USER CODE BEGIN ReadDataTask */
     USART4_printf("Read Data Task Start!\r\n");
     /* 配置433模块为从机发送模式 M0 = 1， M1 = 0 */
@@ -176,10 +179,30 @@ void ReadDataTask(void const *argument)
         HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET);
         osDelay(1000);
         hdc1080_start_measurement(&hi2c1, (float *)&temp, (uint8_t *)&humi);
-        env_pack.Set_Fire(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1));
+        env_pack.Set_Fire(HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_1));
         env_pack.Set_Smooth(HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_0));
         env_pack.Set_Dust(HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_2));
-        USART4_printf("%d\n",humi);
+        for(int x=0;x<10;x++)
+        {
+        fencheng += ((double)get_ADCvalue(ADC_CHANNEL_1)/4096)*12000*0.035;
+        }
+        USART4_printf("%.2f\r\n",fencheng/10.0);
+        env_pack.Set_Air_quilty((uint8_t)fencheng/10);
+        fencheng = 0;
+        if(HAL_UART_Receive_IT(&huart1,aRxBuffer,9)==HAL_OK)
+        {
+            if(aRxBuffer[0]==0xFF)
+            {
+                
+                env_pack.Set_O2((aRxBuffer[2]*256+aRxBuffer[3])/10);
+                USART4_printf("%d\r\n",aRxBuffer[2]*256+aRxBuffer[3]);
+            }
+            else
+            {
+                USART4_printf("data error!\r\n");
+            }
+        }
+        
         env_pack.Set_Tmperture((uint8_t)temp);
         env_pack.Set_Humidity(humi);
         env_pack.format();
